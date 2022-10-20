@@ -61,8 +61,8 @@ def find_best_split(data, label, split_points):
 	return best_split, best_children # return a tuple(attribute, value)
 
 def split_children(data, label, key, split):
-	left_index = [index for index in xrange(len(data.iloc[:,key])) if data.iloc[index,key] < split]
-	right_index = [index for index in xrange(len(data.iloc[:,key])) if data.iloc[index,key] >= split]
+	left_index = [index for index in range(len(data.iloc[:,key])) if data.iloc[index,key] < split]
+	right_index = [index for index in range(len(data.iloc[:,key])) if data.iloc[index,key] >= split]
 	left_data = data.iloc[left_index,:]
 	right_data = data.iloc[right_index,:]
 	left_label = [label[i] for i in left_index]
@@ -113,8 +113,8 @@ def create_tree(data, all_pos_split, label, max_depth, ideal_ls, current_depth =
 	split_var = None
 	min_split = None
 
-	var_spaces = [data.iloc[:,col].tolist() for col in xrange(data.shape[1])]
-	cols = [col for col in xrange(data.shape[1])]
+	var_spaces = [data.iloc[:,col].tolist() for col in range(data.shape[1])]
+	cols = [col for col in range(data.shape[1])]
 	pool = Pool()
 	for split, error, ierr, numf in pool.map(find_splits_parallel, zip(var_spaces, repeat(label), cols)):
 		if not min_error or error < min_error:
@@ -151,7 +151,7 @@ def create_tree(data, all_pos_split, label, max_depth, ideal_ls, current_depth =
 def error_function(split_point, split_var, data, label):
 	data1 = []
 	data2 = []
-	for i in xrange(len(data)):
+	for i in range(len(data)):
 		temp_dat = data[i]
 		if temp_dat <= split_point:
 			data1.append(label[i])
@@ -163,13 +163,13 @@ def error_function(split_point, split_var, data, label):
 def make_prediction(tree, x, annotate = False):
 	if tree['is_leaf']:
 		if annotate: 
-			print "At leaf, predicting %s" % tree['value']
+			print("At leaf, predicting %s" % tree['value'])
 		return tree['value'] 
 	else:
 		# the splitting value of x.
 		split_feature_value = x[tree['splitting_feature'][0]]
 		if annotate: 
-			print "Split on %s = %s" % (tree['splitting_feature'], split_feature_value)
+			print("Split on %s = %s" % (tree['splitting_feature'], split_feature_value))
 		if split_feature_value < tree['splitting_feature'][1]:
 			return make_prediction(tree['left'], x, annotate)
 		else:
@@ -188,8 +188,8 @@ class RegressionTree:
 		node_id = 0
 		all_pos_split = {}
 		pool = Pool()
-		splitting_data = [self.training_data.iloc[:,col].tolist() for col in xrange(self.training_data.shape[1])]
-		cols = [col for col in xrange(self.training_data.shape[1])]
+		splitting_data = [self.training_data.iloc[:,col].tolist() for col in range(self.training_data.shape[1])]
+		cols = [col for col in range(self.training_data.shape[1])]
 		for dat, col in pool.map(get_splitting_points, zip(splitting_data, cols)):
 			all_pos_split[col] = dat
 		pool.close()
@@ -209,5 +209,5 @@ if __name__ == '__main__':
 
 	model = RegressionTree(data, label)
 	model.fit()
-	print model.predict(test)
+	print(model.predict(test))
 

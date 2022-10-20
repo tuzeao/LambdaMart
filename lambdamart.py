@@ -7,8 +7,9 @@ from multiprocessing import Pool
 from RegressionTree import RegressionTree
 import pandas as pd
 import pickle
+from typing import List
 
-def dcg(scores):
+def dcg(scores: List):
 	"""
 		Returns the DCG value of the list of scores.
 		Parameters
@@ -23,10 +24,11 @@ def dcg(scores):
 	"""
 	return np.sum([
 						(np.power(2, scores[i]) - 1) / np.log2(i + 2)
-						for i in xrange(len(scores))
+						for i in range(len(scores))
 					])
 
-def dcg_k(scores, k):
+
+def dcg_k(scores: List, k):
 	"""
 		Returns the DCG value of the list of scores and truncates to k values.
 		Parameters
@@ -43,10 +45,10 @@ def dcg_k(scores, k):
 	"""
 	return np.sum([
 						(np.power(2, scores[i]) - 1) / np.log2(i + 2)
-						for i in xrange(len(scores[:k]))
+						for i in range(len(scores[:k]))
 					])
 
-def ideal_dcg(scores):
+def ideal_dcg(scores: List):
 	"""
 		Returns the Ideal DCG value of the list of scores.
 		Parameters
@@ -59,10 +61,10 @@ def ideal_dcg(scores):
 		Ideal_DCG_val: int
 			This is the value of the Ideal DCG on the given scores
 	"""
-	scores = [score for score in sorted(scores)[::-1]]
+	scores = [score for score in sorted(list(scores))[::-1]]
 	return dcg(scores)
 
-def ideal_dcg_k(scores, k):
+def ideal_dcg_k(scores: List, k):
 	"""
 		Returns the Ideal DCG value of the list of scores and truncates to k values.
 		Parameters
@@ -77,10 +79,10 @@ def ideal_dcg_k(scores, k):
 		Ideal_DCG_val: int
 			This is the value of the Ideal DCG on the given scores
 	"""
-	scores = [score for score in sorted(scores)[::-1]]
+	scores = [score for score in sorted(list(scores))[::-1]]
 	return dcg_k(scores, k)
 
-def single_dcg(scores, i, j):
+def single_dcg(scores: List, i, j):
 	"""
 		Returns the DCG value at a single point.
 		Parameters
@@ -193,8 +195,8 @@ def get_pairs(scores):
 	for query_scores in scores:
 		temp = sorted(query_scores, reverse=True)
 		pairs = []
-		for i in xrange(len(temp)):
-			for j in xrange(len(temp)):
+		for i in range(len(temp)):
+			for j in range(len(temp)):
 				if temp[i] > temp[j]:
 					pairs.append((i,j))
 		query_pair.append(pairs)
@@ -242,8 +244,8 @@ class LambdaMART:
 		# ideal dcg calculation
 		idcg = [ideal_dcg(scores) for scores in true_scores]
 
-		for k in xrange(self.number_of_trees):
-			print 'Tree %d' % (k)
+		for k in range(self.number_of_trees):
+			print('Tree %d' % (k))
 			lambdas = np.zeros(len(predicted_scores))
 			w = np.zeros(len(predicted_scores))
 			pred_scores = [predicted_scores[query_indexes[query]] for query in query_keys]
